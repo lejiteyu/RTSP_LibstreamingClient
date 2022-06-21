@@ -37,6 +37,7 @@
                     android:layout_margin="0dp"
                     android:inputType="textUri"
                     android:singleLine="true"
+                    android:textColor="@color/white"
                     android:text="@string/default_stream" >
                 </EditText>
             </TableRow>
@@ -60,6 +61,7 @@
                     android:layout_column="2"
                     android:inputType="text"
                     android:singleLine="true"
+                    android:textColor="@color/white"
                     android:text="@string/username_hint" />
             </TableRow>
 
@@ -78,6 +80,7 @@
                 <EditText
                     android:id="@+id/password"
                     style="@style/EditText"
+                    android:textColor="@color/white"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_column="2"
@@ -98,12 +101,14 @@
                 android:id="@+id/video"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/white"
                 android:text="@string/video" />
 
             <Button
                 android:id="@+id/save"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/white"
                 android:text="@string/save" />
 
         </LinearLayout>

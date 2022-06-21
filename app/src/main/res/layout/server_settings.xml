@@ -23,6 +23,7 @@
                 style="@style/RadioButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/white"
                 android:text="176x144, 30 fps, 170 Kbps" />
 
             <RadioButton
@@ -30,6 +31,7 @@
                 style="@style/RadioButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/white"
                 android:text="176x144, 30 fps, 200 Kbps" />
 
             <RadioButton
@@ -38,6 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="true"
+                android:textColor="@color/white"
                 android:text="176x144, 30 fps, 250 Kbps" />
 
             <RadioButton
@@ -45,6 +48,7 @@
                 style="@style/RadioButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/white"
                 android:text="320x240, 30 fps, 250 Kbps" />
 
             <RadioButton
@@ -52,6 +56,7 @@
                 style="@style/RadioButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/white"
                 android:text="352x288, 30 fps, 300 Kbps" />
 
             <RadioButton
@@ -59,6 +64,7 @@
                 style="@style/RadioButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/white"
                 android:text="352x288, 30 fps, 400 Kbps" />
 
             <RadioButton
@@ -66,6 +72,7 @@
                 style="@style/RadioButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/white"
                 android:text="640x480, 30 fps, 600 Kbps" />
         </RadioGroup>
     </LinearLayout>
