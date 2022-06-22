@@ -18,6 +18,15 @@
 
 package net.majorkernelpanic.streaming.rtsp;
 
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
+import android.util.Log;
+
+import net.majorkernelpanic.streaming.Session;
+import net.majorkernelpanic.streaming.Stream;
+import net.majorkernelpanic.streaming.rtp.RtpSocket;
+
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,13 +42,6 @@ import java.util.Locale;
 import java.util.concurrent.Semaphore;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.majorkernelpanic.streaming.Session;
-import net.majorkernelpanic.streaming.Stream;
-import net.majorkernelpanic.streaming.rtp.RtpSocket;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Looper;
-import android.util.Log;
 
 /**
  * RFC 2326.
@@ -461,7 +463,7 @@ public class RtspClient {
 	 * Forges and sends the OPTIONS request 
 	 */
 	private void sendRequestOption() throws IOException {
-		String request = "OPTIONS rtsp://"+mParameters.host+":"+mParameters.port+mParameters.path+", RTSP/1.0\r\n" + addHeaders();
+		String request = "OPTIONS rtsp://"+mParameters.host+":"+mParameters.port+mParameters.path+" RTSP/1.0\r\n" + addHeaders();
 		Log.i(TAG,request.substring(0, request.indexOf("\r\n")));
 		mOutputStream.write(request.getBytes("UTF-8"));
 		mOutputStream.flush();

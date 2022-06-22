@@ -83,6 +83,78 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
+    @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        mLayoutVideoSettings.setVisibility(View.GONE);
+        mLayoutServerSettings.setVisibility(View.VISIBLE);
+        selectQuality();
+    }
+
+    private void enableUI() {
+        mButtonStart.setEnabled(true);
+        mButtonCamera.setEnabled(true);
+        mButtonStart.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
+    }
+
+    @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // 拒绝时, 关闭页面, 缺少主要权限, 无法运行
+        if (requestCode == OVERLAY_PERMISSION_REQ_CODE) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (!Settings.canDrawOverlays(this)) {
+                    // SYSTEM_ALERT_WINDOW permission not granted...
+                    Toast.makeText(this, "Permission Denieddd by user.Please Check it in Settings",Toast.LENGTH_LONG);
+                }
+            }
+            finish();
+        }else if (requestCode == REQUEST_CODE && resultCode == PermissionsActivity.PERMISSIONS_DENIED) {
+            finish();
+        }else if(requestCode == REQUEST_CODE && resultCode == PermissionsActivity.PERMISSIONS_GRANTED){
+            init();
+        }
+    }
+
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.start:
+                mLayoutServerSettings.setVisibility(View.GONE);
+                toggleStream();
+                break;
+            case R.id.flash:
+                if (mButtonFlash.getTag().equals("on")) {
+                    mButtonFlash.setTag("off");
+                    mButtonFlash.setImageResource(R.drawable.ic_flash_on_holo_light);
+                } else {
+                    mButtonFlash.setImageResource(R.drawable.ic_flash_off_holo_light);
+                    mButtonFlash.setTag("on");
+                }
+                mSession.toggleFlash();
+                break;
+            case R.id.camera:
+                mSession.switchCamera();
+                break;
+            case R.id.settings:
+                if (mLayoutVideoSettings.getVisibility() == View.GONE &&
+                        mLayoutServerSettings.getVisibility() == View.GONE) {
+                    mLayoutServerSettings.setVisibility(View.VISIBLE);
+                } else {
+                    mLayoutServerSettings.setVisibility(View.GONE);
+                    mLayoutVideoSettings.setVisibility(View.GONE);
+                }
+                break;
+            case R.id.video:
+                mRadioGroup.clearCheck();
+                mLayoutServerSettings.setVisibility(View.GONE);
+                mLayoutVideoSettings.setVisibility(View.VISIBLE);
+                break;
+            case R.id.save:
+                mLayoutServerSettings.setVisibility(View.GONE);
+                break;
+        }
+    }
+
     private void init(){
 
         mButtonVideo = (Button) findViewById(R.id.video);
@@ -111,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements
         mButtonVideo.setOnClickListener(this);
         mButtonSettings.setOnClickListener(this);
         mButtonFlash.setTag("off");
-
+        mButtonStart.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
         SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         if (mPrefs.getString("uri", null) != null) mLayoutServerSettings.setVisibility(View.GONE);
         mEditTextURI.setText(mPrefs.getString("uri", getString(R.string.default_stream)));
@@ -214,66 +286,6 @@ public class MainActivity extends AppCompatActivity implements
 
 
 
-    @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        // 拒绝时, 关闭页面, 缺少主要权限, 无法运行
-        if (requestCode == OVERLAY_PERMISSION_REQ_CODE) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (!Settings.canDrawOverlays(this)) {
-                    // SYSTEM_ALERT_WINDOW permission not granted...
-                    Toast.makeText(this, "Permission Denieddd by user.Please Check it in Settings",Toast.LENGTH_LONG);
-                }
-            }
-            finish();
-        }else if (requestCode == REQUEST_CODE && resultCode == PermissionsActivity.PERMISSIONS_DENIED) {
-//            ToastUtile.showText(getBaseContext(),"I am GG!!");
-            finish();
-        }else if(requestCode == REQUEST_CODE && resultCode == PermissionsActivity.PERMISSIONS_GRANTED){
-            init();
-        }
-    }
-
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.start:
-                mLayoutServerSettings.setVisibility(View.GONE);
-                toggleStream();
-                break;
-            case R.id.flash:
-                if (mButtonFlash.getTag().equals("on")) {
-                    mButtonFlash.setTag("off");
-                    mButtonFlash.setImageResource(R.drawable.ic_flash_on_holo_light);
-                } else {
-                    mButtonFlash.setImageResource(R.drawable.ic_flash_off_holo_light);
-                    mButtonFlash.setTag("on");
-                }
-                mSession.toggleFlash();
-                break;
-            case R.id.camera:
-                mSession.switchCamera();
-                break;
-            case R.id.settings:
-                if (mLayoutVideoSettings.getVisibility() == View.GONE &&
-                        mLayoutServerSettings.getVisibility() == View.GONE) {
-                    mLayoutServerSettings.setVisibility(View.VISIBLE);
-                } else {
-                    mLayoutServerSettings.setVisibility(View.GONE);
-                    mLayoutVideoSettings.setVisibility(View.GONE);
-                }
-                break;
-            case R.id.video:
-                mRadioGroup.clearCheck();
-                mLayoutServerSettings.setVisibility(View.GONE);
-                mLayoutVideoSettings.setVisibility(View.VISIBLE);
-                break;
-            case R.id.save:
-                mLayoutServerSettings.setVisibility(View.GONE);
-                break;
-        }
-    }
-
     private void logError(final String msg) {
         final String error = (msg == null) ? "Error unknown" : msg;
         // Displays a popup to report the eror to the user
@@ -289,8 +301,8 @@ public class MainActivity extends AppCompatActivity implements
     public void toggleStream() {
         mProgressBar.setVisibility(View.VISIBLE);
         if (!mClient.isStreaming()) {
-            String ip,port,path;
-
+            String ip="",port="",path="";
+            mButtonStart.setBackgroundColor(getResources().getColor(android.R.color.holo_red_dark));
             // We save the content user inputs in Shared Preferences
             SharedPreferences mPrefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
             SharedPreferences.Editor editor = mPrefs.edit();
@@ -301,10 +313,14 @@ public class MainActivity extends AppCompatActivity implements
 
             // We parse the URI written in the Editext
             Pattern uri = Pattern.compile("rtsp://(.+):(\\d*)/(.+)");
-            Matcher m = uri.matcher(mEditTextURI.getText()); m.find();
-            ip = m.group(1);
-            port = m.group(2);
-            path = m.group(3);
+            Matcher m = uri.matcher(mEditTextURI.getText());
+            m.find();
+            if( m.groupCount()>=3)
+                ip = m.group(1);
+            if( m.groupCount()>=3)
+                port = m.group(2);
+            if( m.groupCount()>=3)
+                path = m.group(3);
 
             mClient.setCredentials(mEditTextUsername.getText().toString(), mEditTextPassword.getText().toString());
             mClient.setServerAddress(ip, Integer.parseInt(port));
@@ -314,20 +330,12 @@ public class MainActivity extends AppCompatActivity implements
         } else {
             // Stops the stream and disconnects from the RTSP server
             mClient.stopStream();
+            mProgressBar.setVisibility(View.GONE);
+            mButtonStart.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
         }
     }
 
-    @Override
-    public void onCheckedChanged(RadioGroup group, int checkedId) {
-        mLayoutVideoSettings.setVisibility(View.GONE);
-        mLayoutServerSettings.setVisibility(View.VISIBLE);
-        selectQuality();
-    }
 
-    private void enableUI() {
-        mButtonStart.setEnabled(true);
-        mButtonCamera.setEnabled(true);
-    }
 
     private void selectQuality() {
         int id = mRadioGroup.getCheckedRadioButtonId();
